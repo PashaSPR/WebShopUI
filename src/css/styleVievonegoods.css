@@ -1,0 +1,11 @@
+.null-value {
+  color: gray;
+  /* Колір для null значень */
+  font-weight: normal;
+}
+
+.not-null-value {
+  color: black;
+  /* Колір для ненульових значень */
+  font-weight: bold;
+}

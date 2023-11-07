@@ -1,0 +1,50 @@
+/* Приклад стилів для зміни розміру зображень в каруселі */
+/* Змінюємо розміри зображень в каруселі */
+
+
+
+/* .carousel .slide img { */
+  /* Встановлюємо бажану висоту */
+  /* max-height: 300px; */
+  /* Встановлюємо бажану ширину */
+  /* max-width: 300px; */
+/* } */
+
+
+
+/* .carousel-container { */
+  /* max-width: 400px; Фіксована максимальна ширина контейнера */
+  /* max-height: 200px; Фіксована максимальна висота контейнера */
+/* } */
+
+.carousel-container .carousel .slide img {
+  width: auto;
+  max-height: 280px; 
+}
+
+
+.buttonCarousel {
+  position: absolute;
+  top: 70%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(255, 255, 255, 0.7);
+  border: 4px double red;
+  border-radius: 5px;
+  padding: 8px 16px;
+  cursor: pointer;
+}
+
+.custom-file-upload {
+  border: 2px solid #ccc;
+  display: inline-block;
+  padding: 6px 12px;
+  cursor: pointer;
+  background-color: #f9f9f9;
+  color: #333;
+  border-radius: 4px;
+}
+
+.custom-file-upload input[type="file"] {
+  display: none;
+}

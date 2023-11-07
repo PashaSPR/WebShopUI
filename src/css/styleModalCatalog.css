@@ -1,0 +1,11 @@
+.highlight-on-hover {
+    cursor: pointer; /* Змінює значок курсору на вказівник при наведенні */
+    transition: border 0.3s ease-in-out; /* Додає плавну анімацію для рамки */
+  }
+  
+  .highlight-on-hover:hover {
+    color: red; /* Встановлює колір тексту при наведенні мишкою */
+    /* border: 1px solid blue; Встановлює рамку при наведенні мишкою */
+    background-color: lightgrey;
+  }
+  

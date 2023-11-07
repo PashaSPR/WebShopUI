@@ -1,0 +1,89 @@
+/* body {
+    padding: 10px;
+  }
+  
+  .carousel {
+    position: relative;
+    width: 398px;
+    padding: 10px 40px;
+    border: 1px solid #CCC;
+    border-radius: 15px;
+    background: #eee;
+  }
+  
+  .carousel img {
+    width: 130px;
+    height: 130px; */
+    /* робимо цей елемент блочним, щоб прибрати вільне місце навколо зображення */
+    /* display: block;
+  }
+  
+  .arrow {
+    position: absolute;
+    top: 60px;
+    padding: 0;
+    background: #ddd;
+    border-radius: 15px;
+    border: 1px solid gray;
+    font-size: 24px;
+    line-height: 24px;
+    color: #444;
+    display: block;
+  }
+  
+  .arrow:focus {
+    outline: none;
+  }
+  
+  .arrow:hover {
+    background: #ccc;
+    cursor: pointer;
+  }
+  
+  .prev {
+    left: 7px;
+  }
+  
+  .next {
+    right: 7px;
+  }
+  
+  .gallery {
+    width: 390px;
+    overflow: hidden;
+  }
+  
+  .gallery ul {
+    display: flex;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    transition: margin-left 250ms;
+    font-size: 0;
+  }
+  
+  .gallery li {
+    display: inline-block;
+  } */
+
+
+   /* Приклад стилів для зміни розміру зображень в каруселі */
+/* Змінюємо розміри зображень в каруселі */
+.carousel .slide img {
+  max-width: 300px; /* Встановлюємо бажану ширину */
+  max-height: 200px; /* Встановлюємо бажану висоту */
+}
+
+/* Змінюємо розміри стрілок перемикання слайдів */
+.carousel .slide .control-prev,
+.carousel .slide .control-next {
+  width: 40px; /* Встановлюємо бажану ширину */
+  height: 40px; /* Встановлюємо бажану висоту */
+}
+
+/* Змінюємо розміри точок навігації */
+.carousel .carousel-status .dot {
+  width: 12px; /* Встановлюємо бажану ширину */
+  height: 12px; /* Встановлюємо бажану висоту */
+  margin: 5px; /* Встановлюємо бажаний відступ між точками */
+}

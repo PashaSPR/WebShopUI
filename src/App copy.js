@@ -144,130 +144,24 @@
 ////////////////////////////////////////////////////////////////////////////////////
 
 
-import React, { createContext, Suspense, useEffect, useMemo, useState } from "react";
-import './App.css';
-import { Route, Routes } from "react-router-dom";
-import { HelmetProvider } from "react-helmet-async";
-import { CircularProgress } from "@mui/material";
-import { Sidebar } from "./component/menu/Sidebar";
-// import { Navmenu } from "./component/menu/Navmenu";
-import nprogress from "nprogress";
-import "nprogress/nprogress.css";
-// import Header from "./components/elements/header/header";
-import NotFoundPage from "./pages/Notfoundpage";
-import AdminRoutes from "./routes/admin/AdminRoutes";
-import RoutesForAdmin from "./routes/admin/RoutesForAdmin";
-import ManagerRoutes from "./routes/manager/ManagerRoutes";
-import RoutesForManager from "./routes/manager/RoutesForManager";
-import CustomerRoutes from "./routes/customer/CustomerRoutes";
-import RoutesForCustomer from "./routes/customer/RoutesForCustomer";
-import routes from "./routes/customer/CustomerRoutes"; ///???????????????????????????????
-
-// import clientRoutesConcat from "./routes/clientRoutes";
-// import jwt_decode from "jwt-decode";
-// import adminRoutesConcat from "./routes/adminRoutes";
-
-export const AppContext = createContext({});
-
-function App() {
-  // const [authenticated, setAuthenticated] = useState(localStorage.getItem("token"));
-  const [authenticated, setAuthenticated] = useState(true);
-  // const location = useLocation();
-  // const navigate = useNavigate();
-  const roles ="ROLE_CUSTONER";
-
-  const getMenuRoutes = () => {
-    switch (true) {
-      case roles.includes("ROLE_MANAGER"):
-        return RoutesForManager; // Маршрути для ролі "Manager"
-      case roles.includes("ROLE_CUSTONER"):
-        return RoutesForCustomer; // Маршрути для ролі "Customer"
-      case roles.includes("ROLE_ADMIN"):
-        return RoutesForAdmin; // Маршрути для ролі "Admin"
-      default:
-        return routes; // За замовчуванням
-    }
-  };
-
-  const authRouteRender = () => {
-    if (!authenticated) {
-      return (
-        routes.map((route, index) => (
-          <Route key={index} path={route.path} element={route.element} />
-        ))
-      );
-    } else {
-      // const { roles } = jwt_decode(localStorage.getItem("token"));
-      let roleRoutes;
-      switch (true) {
-        // case roles.includes("ROLE_MANAGER"): roleRoutes = ManagerRoutes; break;
-        // case roles.includes("ROLE_CUSTONER"): roleRoutes = CustomerRoutes; break;
-        // case roles.includes("ROLE_ADMIN"): roleRoutes = AdminRoutes; break;
-        case roles.includes("ROLE_MANAGER"): roleRoutes = ManagerRoutes; break;
-        case roles.includes("ROLE_CUSTONER"): roleRoutes = CustomerRoutes; break;
-        case roles.includes("ROLE_ADMIN"): roleRoutes = AdminRoutes; break;
-        // default: roleRoutes = ManagerRoutes; break;
-        default: roleRoutes = routes; break;
-      }
-      return (
-        roleRoutes.map((route, index) => (
-          <Route key={index} path={route.path} element={route.element} />
-        ))
-      );
-    }
-  };
-
-  useMemo(() => {
-    nprogress.start();
-  }, []);
-
-  useEffect(() => {
-    nprogress.done();
-  }, []);
-
-  return (
-    <AppContext.Provider
-      value={{
-        authenticated,
-        setAuthenticated,
-        timeZone: new Date().getTimezoneOffset(),
-      }}
-    >
-      <HelmetProvider>
-        {/* <Header /> */}
-        <div className="container" >
-          <Suspense fallback={<CircularProgress />}>
-            <Sidebar menuRoutes={getMenuRoutes()}>
-              <Routes>
-                {authRouteRender()}
-                <Route path="*" element={<NotFoundPage />} />
-              </Routes>
-            </Sidebar>             
-          </Suspense>
-        </div>
-      </HelmetProvider>
-    </AppContext.Provider>
-  );
-}
-
-export default App;
-
-
-////////////////////////////////////////////////////////////////////////////////////
-
 // import React, { createContext, Suspense, useEffect, useMemo, useState } from "react";
 // import './App.css';
 // import { Route, Routes } from "react-router-dom";
 // import { HelmetProvider } from "react-helmet-async";
 // import { CircularProgress } from "@mui/material";
+// import { Sidebar } from "./component/menu/Sidebar";
+// // import { Navmenu } from "./component/menu/Navmenu";
 // import nprogress from "nprogress";
 // import "nprogress/nprogress.css";
-// import jwt_decode from "jwt-decode";
+// // import Header from "./components/elements/header/header";
 // import NotFoundPage from "./pages/Notfoundpage";
 // import routes from "./routes/manager/ManagerRoutes";
-// import clientRoutesConcat from "./routes/clientRoutes";
-// import adminRoutesConcat from "./routes/adminRoutes";
-// import { AppContext } from "./your-context"; // Додайте правильний шлях до вашого контексту
+
+// // import clientRoutesConcat from "./routes/clientRoutes";
+// // import jwt_decode from "jwt-decode";
+// // import adminRoutesConcat from "./routes/adminRoutes";
+
+// export const AppContext = createContext({});
 
 // function App() {
 //   const [authenticated, setAuthenticated] = useState(localStorage.getItem("token"));
@@ -280,32 +174,17 @@ export default App;
 //         ))
 //       );
 //     } else {
-//       const { roles } = jwt_decode(localStorage.getItem("token"));
+//       // const { roles } = jwt_decode(localStorage.getItem("token"));
 //       let roleRoutes;
-//       let SidebarComponent; // Визначаємо змінну для компонента Sidebar/AdminMenu/NavMenu
-
 //       switch (true) {
-//         case roles.includes("ROLE_CLIENT"):
-//           roleRoutes = clientRoutesConcat;
-//           SidebarComponent = <Sidebar />;
-//           break;
-//         case roles.includes("ROLE_ADMIN"):
-//           roleRoutes = adminRoutesConcat;
-//           SidebarComponent = <AdminMenu />;
-//           break;
-//         default:
-//           roleRoutes = routes;
-//           SidebarComponent = <NavMenu />;
-//           break;
+//         // case roles.includes("ROLE_CLIENT"): roleRoutes = clientRoutesConcat; break;
+//         // case roles.includes("ROLE_ADMIN"): roleRoutes = adminRoutesConcat; break;
+//         default: roleRoutes = routes; break;
 //       }
 //       return (
-//         <>
-//           {SidebarComponent}
-//           <Routes>
-//             {authRouteRender(roleRoutes)}
-//             <Route path="*" element={<NotFoundPage />} />
-//           </Routes>
-//         </>
+//         roleRoutes.map((route, index) => (
+//           <Route key={index} path={route.path} element={route.element} />
+//         ))
 //       );
 //     }
 //   };
@@ -327,9 +206,15 @@ export default App;
 //       }}
 //     >
 //       <HelmetProvider>
-//         <div className="container">
+//         {/* <Header /> */}
+//         <div className="container" >
 //           <Suspense fallback={<CircularProgress />}>
-//             {authRouteRender()}
+//             <Sidebar>
+//               <Routes>
+//                 {authRouteRender()}
+//                 <Route path="*" element={<NotFoundPage />} />
+//               </Routes>
+//             </Sidebar>
 //           </Suspense>
 //         </div>
 //       </HelmetProvider>
@@ -338,3 +223,90 @@ export default App;
 // }
 
 // export default App;
+
+
+////////////////////////////////////////////////////////////////////////////////////
+
+import React, { createContext, Suspense, useEffect, useMemo, useState } from "react";
+import './App.css';
+import { Route, Routes } from "react-router-dom";
+import { HelmetProvider } from "react-helmet-async";
+import { CircularProgress } from "@mui/material";
+import nprogress from "nprogress";
+import "nprogress/nprogress.css";
+import jwt_decode from "jwt-decode";
+import NotFoundPage from "./pages/Notfoundpage";
+import routes from "./routes/manager/ManagerRoutes";
+import clientRoutesConcat from "./routes/clientRoutes";
+import adminRoutesConcat from "./routes/adminRoutes";
+import { AppContext } from "./your-context"; // Додайте правильний шлях до вашого контексту
+
+function App() {
+  const [authenticated, setAuthenticated] = useState(localStorage.getItem("token"));
+
+  const authRouteRender = () => {
+    if (!authenticated) {
+      return (
+        routes.map((route, index) => (
+          <Route key={index} path={route.path} element={route.element} />
+        ))
+      );
+    } else {
+      const { roles } = jwt_decode(localStorage.getItem("token"));
+      let roleRoutes;
+      let SidebarComponent; // Визначаємо змінну для компонента Sidebar/AdminMenu/NavMenu
+
+      switch (true) {
+        case roles.includes("ROLE_CLIENT"):
+          roleRoutes = clientRoutesConcat;
+          SidebarComponent = <Sidebar />;
+          break;
+        case roles.includes("ROLE_ADMIN"):
+          roleRoutes = adminRoutesConcat;
+          SidebarComponent = <AdminMenu />;
+          break;
+        default:
+          roleRoutes = routes;
+          SidebarComponent = <NavMenu />;
+          break;
+      }
+      return (
+        <>
+          {SidebarComponent}
+          <Routes>
+            {authRouteRender(roleRoutes)}
+            <Route path="*" element={<NotFoundPage />} />
+          </Routes>
+        </>
+      );
+    }
+  };
+
+  useMemo(() => {
+    nprogress.start();
+  }, []);
+
+  useEffect(() => {
+    nprogress.done();
+  }, []);
+
+  return (
+    <AppContext.Provider
+      value={{
+        authenticated,
+        setAuthenticated,
+        timeZone: new Date().getTimezoneOffset(),
+      }}
+    >
+      <HelmetProvider>
+        <div className="container">
+          <Suspense fallback={<CircularProgress />}>
+            {authRouteRender()}
+          </Suspense>
+        </div>
+      </HelmetProvider>
+    </AppContext.Provider>
+  );
+}
+
+export default App;
