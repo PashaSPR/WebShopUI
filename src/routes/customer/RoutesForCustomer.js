@@ -41,7 +41,7 @@ const RoutesForCustomer = [
       {
         path: "/cart",
         element: <Comments/>,
-        name: "Корзина",
+        name: "Кошик",
         icon: <FaWpforms />,
         subputh: ""
       },
