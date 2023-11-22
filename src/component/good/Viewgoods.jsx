@@ -475,6 +475,7 @@ import {
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import { Link as RouterLink } from 'react-router-dom';
+import MessageEmptyFieldModal from '../modal/MessageEmptyFieldModal';
 
 const defaultTheme = createTheme();
 
@@ -485,6 +486,8 @@ export default class Viewgoods extends Component {
       error: null,
       isLoaded: false,
       items: [],
+      openDialog: false,
+      dialogText: '',
     };
   }
 
@@ -509,15 +512,40 @@ export default class Viewgoods extends Component {
 
   handleDelete = (id) => {
     fetch(`http://localhost:8080/goods/${id}`, { method: 'DELETE' })
-      .then(() => {
-        const updatedItems = this.state.items.filter((item) => item.id !== id);
-        this.setState({ items: updatedItems });
+      .then((response) => {
+        if (response.ok) {
+          // Видалення успішне, оновіть стан компонента
+          const updatedItems = this.state.items.filter((item) => item.id !== id);
+          this.setState({ items: updatedItems });
+        } else {
+          // Виникла помилка при видаленні, відобразіть повідомлення про помилку
+          response.json().then((data) => {
+            this.setState({
+              dialogText: `Помилка при видаленні товару: ${data.message}`,
+              openDialog: true,
+            });
+          });
+        }
       })
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        console.error('Помилка при видаленні товару:', error);
+        this.setState({
+          dialogText: 'Увага!!! :  ' + error.message,
+          openDialog: true,
+        });
+      });
+  };
+  
+
+  handleCloseDialog = () => {
+    this.setState({ openDialog: false }); // Закриваємо діалогове вікно при натисканні кнопки "OK"
   };
 
+
   render() {
-    const { error, isLoaded, items } = this.state;
+    const { error, isLoaded, items, openDialog, dialogText  } = this.state;
+    // const [openDialog, setOpenDialog] = useState(false); // Стан для відображення діалогового вікна
+    // const [dialogText, setDialogText] = useState('');
 
     if (error) {
       return <p>Error {error.message}</p>;
@@ -585,16 +613,16 @@ export default class Viewgoods extends Component {
                         <Typography>{item.short_discription}</Typography>
                       </CardContent>
                       <CardActions>
-                      <ButtonGroup variant="outlined" aria-label="outlined button group">
-                        <Button size="small" component={RouterLink} to={`/manager/view-one-good/${item.id}`}>
-                          Вікдрити
-                        </Button>
-                        <Button size="small" component={RouterLink} to={`/manager/add-photo/${item.id}`}>
-                          Фото
-                        </Button>
-                        <Button size="small" color="error" onClick={() => this.handleDelete(item.id)}>
-                          Delete
-                        </Button>
+                        <ButtonGroup variant="outlined" aria-label="outlined button group">
+                          <Button size="small" component={RouterLink} to={`/manager/view-one-good/${item.id}`}>
+                            Вікдрити
+                          </Button>
+                          <Button size="small" component={RouterLink} to={`/manager/add-photo/${item.id}`}>
+                            Фото
+                          </Button>
+                          <Button size="small" color="error" onClick={() => this.handleDelete(item.id)}>
+                            Delete
+                          </Button>
                         </ButtonGroup>
                       </CardActions>
                     </Card>
@@ -602,6 +630,8 @@ export default class Viewgoods extends Component {
                 ))}
               </Grid>
             </Container>
+            <MessageEmptyFieldModal open={openDialog} onClose={this.handleCloseDialog} dialogText={dialogText} />
+
           </main>
           {/* Footer */}
           <Box sx={{ bgcolor: 'background.paper', p: 6 }} component="footer">
@@ -626,3 +656,4 @@ export default class Viewgoods extends Component {
     }
   }
 }
+

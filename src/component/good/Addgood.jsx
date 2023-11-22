@@ -53,7 +53,7 @@ const Addgood = () => {
         console.log('New good added');
         console.log('Good ID:', data.id); // Рядок для перевірки
         // Перехід на сторінку додавання зображення товару з ідентифікатором нового доданого товару
-        navigate(`/addphotosgood/${data.id}`);
+        navigate(`/manager/add-photo/${data.id}`);
       })
       .catch(error => console.log(error));
   };

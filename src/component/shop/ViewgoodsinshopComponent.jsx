@@ -159,71 +159,78 @@ export default class ViewgoodsinshopComponent extends Component {
       return <p>Loading...</p>;
     } else {
       return (
-        <ThemeProvider theme={defaultTheme}>
 
-          <Container sx={{ py: 4, flexBasis: '1z%' }}>
-            <Button
-              variant="outlined"
-              color="primary"
-              onClick={this.handleOpenModal}
-            >
-              Каталог товарів
-            </Button>
-            <div>
-              <ModalCatalogGoodsComponent
-                call={modalState}
-                onDestroy={() => this.setModalState(false)}
-                onCategorySelect={this.handleCategorySelect}
-                onSubcategorySelect={this.handleSubcategorySelect}
-                onProductSelect={this.handleProductSelect}
-              />
-            </div>
-          </Container>
-          <main style={{ display: 'flex' }}>
-            <Container sx={{ py: 4, flexBasis: '75%' }}>
-              <Grid container spacing={4}>
-                {items.map((item) => (
-                  <Grid item key={item.id} xs={12} sm={6} md={4}>
-                    <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-                      <RouterLink to={`/good/${item.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-                        <div
-                          style={{
-                            paddingTop: '75%',
-                            backgroundImage: `url(${item.goods.photosGoodsDTOS && item.goods.photosGoodsDTOS.length > 0 ? item.goods.photosGoodsDTOS[0].path : 'https://source.unsplash.com/random?wallpapers'})`,
-                            backgroundSize: 'contain',
-                            backgroundRepeat: 'no-repeat',
-                            backgroundPosition: 'center',
-                          }}
-                        />
-                        <CardContent sx={{ flexGrow: 1 }}>
-                          <Typography gutterBottom variant="h5" component="h2">
-                            {item.goods.name}
-                          </Typography>
-                          
-                          <Typography>
-                            <Rating readOnly value={item.evaluation ?? 0} />
-                          </Typography>
+        <>
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={this.handleOpenModal}
+          >
+            Каталог товарів
+          </Button>
+          
+          <ThemeProvider theme={defaultTheme}>
 
-                          <Typography>{item.goods.short_discription}</Typography>
-                        </CardContent>
-                        <CardContent>
-                          <Typography gutterBottom variant="h4" component="h1">
-                            {item.price} ₴
-                            <h5 >{item.quantity === 0 ? "Товар відсутній" : "Є в наявності"}</h5>
-                          </Typography>
-                        </CardContent>
-                      </RouterLink>
-                    </Card>
-                  </Grid>
-                ))}
-              </Grid>
+            <Container sx={{ py: 4, flexBasis: '1z%' }}>
+
+              <div>
+                <ModalCatalogGoodsComponent
+                  call={modalState}
+                  onDestroy={() => this.setModalState(false)}
+                  onCategorySelect={this.handleCategorySelect}
+                  onSubcategorySelect={this.handleSubcategorySelect}
+                  onProductSelect={this.handleProductSelect}
+                />
+              </div>
             </Container>
-          </main>
+            <main style={{ display: 'flex' }}>
+              <Container sx={{ py: 4, flexBasis: '75%' }}>
+                <Grid container spacing={4}>
+                  {items.map((item) => (
+                    <Grid item key={item.id} xs={12} sm={6} md={4}>
+                      <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                        <RouterLink to={`/good/${item.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                          <div
+                            style={{
+                              paddingTop: '75%',
+                              backgroundImage: `url(${item.goods.photosGoodsDTOS && item.goods.photosGoodsDTOS.length > 0 ? item.goods.photosGoodsDTOS[0].path : 'https://source.unsplash.com/random?wallpapers'})`,
+                              backgroundSize: 'contain',
+                              backgroundRepeat: 'no-repeat',
+                              backgroundPosition: 'center',
+                            }}
+                          />
+                          <CardContent sx={{ flexGrow: 1 }}>
+                            <Typography gutterBottom variant="h5" component="h2">
+                              {item.goods.name}
+                            </Typography>
 
-          <Box sx={{ bgcolor: 'background.paper', p: 6 }} component="footer">
-            {/* Ваш футер */}
-          </Box>
-        </ThemeProvider>
+                            <Typography>
+                              <Rating readOnly value={item.evaluation ?? 0} />
+                            </Typography>
+
+                            <Typography>{item.goods.short_discription}</Typography>
+                          </CardContent>
+                          <CardContent>
+                            <Typography gutterBottom variant="h4" component="h1">
+                              {item.price} ₴
+                              <h5 >{item.quantity < 1 ? "Товар відсутній" : "Є в наявності"}</h5>
+                            </Typography>
+                          </CardContent>
+                        </RouterLink>
+                      </Card>
+                    </Grid>
+                  ))}
+                </Grid>
+              </Container>
+            </main>
+
+            <Box sx={{ bgcolor: 'background.paper', p: 6 }} component="footer">
+              {/* Ваш футер */}
+            </Box>
+          </ThemeProvider>
+
+
+        </>
       );
     }
   }

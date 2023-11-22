@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import {
-    Button, 
-    Card, Modal,
+    Button, MenuItem,
+    Card, Select, TextField,
     CardContent, DialogActions,
-    // MenuItem,Select, TextField,FormControl, InputLabel
+    Modal, FormControl, InputLabel
 } from "@mui/material";
 import { Link } from 'react-router-dom';
 
@@ -85,7 +85,7 @@ const CartModal = ({
                                     <table>
                                         <tr>
                                             <td><h3>{goodsOrder.goodsInvoicesDTO.goods.name}</h3></td>
-                                            
+                                            <td width={400}></td>
                                             <td>
                                                 <button onClick={() => handleDelete(goodsOrder.id)}>Видалити</button>
                                             </td>

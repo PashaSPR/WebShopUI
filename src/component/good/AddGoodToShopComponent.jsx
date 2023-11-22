@@ -100,10 +100,16 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+import {
+    TextField, Select, MenuItem, InputLabel,
+    FormControl, Button, Dialog, DialogTitle,
+    DialogContent, DialogActions, Grid
+} from '@mui/material';
+import MessageEmptyFieldModal from '../modal/MessageEmptyFieldModal';
+
 // import { Unstable_NumberInput as NumberInput } from '@mui/base';
 
 
-import { Button, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Grid } from '@mui/material';
 // import { Link as RouterLink } from 'react-router-dom';
 
 export default class AddGoodToShopComponent extends Component {
@@ -115,10 +121,15 @@ export default class AddGoodToShopComponent extends Component {
             items: [],
             isDialogOpen: false,
             selectedItemId: null,
-            quantity: '',
-            price: '',
+            quantity: 1,
+            price: 1,
+            sellers: [],
+            sellerId: 1,
+            openDialogModal: false,
+            dialogTextModal: '',
         };
     }
+
 
     componentDidMount() {
         fetch('http://localhost:8080/goods')
@@ -137,7 +148,30 @@ export default class AddGoodToShopComponent extends Component {
                     });
                 }
             );
+
+        fetch('http://localhost:8080/sellers/getAll')
+            .then((res) => {
+                if (res.status === 200) {
+                    return res.json();
+                } else {
+                    throw new Error('HTTP Error: ' + res.status);
+                }
+            })
+            .then((data) => {
+                if (data) {
+                    this.setState({ sellers: data });
+                } else {
+                    console.error('Перелік покупців відсутній');
+                }
+            })
+            .catch((error) => console.error('Помилка отримання переліку покупців:', error));
     }
+
+
+    handleSellerChange = (e) => {
+        this.setState({ sellerId: e.target.value });
+    }
+
     openDialog = (itemId) => {
         this.setState({
             isDialogOpen: true,
@@ -158,6 +192,7 @@ export default class AddGoodToShopComponent extends Component {
         // Створюємо об'єкт для відправки на сервер
         const requestData = {
             goodsId: selectedItemId,
+            sellersId: this.state.sellerId,
             quantity: parseInt(quantity), // Перетворюємо кількість на ціле число
             price: parseFloat(price), // Перетворюємо ціну на дробове число
         };
@@ -170,26 +205,66 @@ export default class AddGoodToShopComponent extends Component {
             },
             body: JSON.stringify(requestData), // Перетворюємо дані в JSON
         })
-            .then((response) => response.json())
-            .then((data) => {
-                // Обробляємо відповідь від сервера, наприклад, виводимо повідомлення про успішне додавання
-                console.log('Товар успішно доданий:', data);
-                // Очищаємо поля вводу кількості та ціни
-                this.setState({
-                    quantity: '',
-                    price: '',
-                });
-                // Закриваємо діалогове вікно
-                this.closeDialog();
-            })
+            .then((response) => {
+                if (response.ok) {
+
+                    // Очищаємо поля вводу кількості та ціни
+                    this.setState({
+                        quantity: 1,
+                        price: 1,
+                        sellersId: '',
+                    });
+                    // Закриваємо діалогове вікно
+                    this.closeDialog();
+                    console.log('Товар успішно доданий:', response);    
+                  } else {
+                    // Очищаємо поля вводу кількості та ціни
+                    this.setState({
+                        quantity: '',
+                        price: '',
+                        openDialogModal: true,
+                    });
+    
+                    // Виникла помилка при видаленні, відобразіть повідомлення про помилку
+                    response.json().then((data) => {
+                      this.setState({
+                        dialogTextModal: `Помилка при додаванні товару: ${data.message}`,
+                        openDialogModal: true,
+                      });
+                    });
+                  }
+
+                }
+                
+            )
+            // .then((data) => {
+            //     // Обробляємо відповідь від сервера, наприклад, виводимо повідомлення про успішне додавання
+            //     console.log('Товар успішно доданий:', data);
+            //     // Очищаємо поля вводу кількості та ціни
+            //     this.setState({
+            //         quantity: '',
+            //         price: '',
+            //     });
+            //     // Закриваємо діалогове вікно
+            //     this.closeDialog();
+                
+            // })
             .catch((error) => {
                 // Обробляємо помилку від сервера, наприклад, виводимо повідомлення про помилку
-                console.error('Помилка при додаванні товару:', error);
+                console.error('Помилка при додаванні товару: ', error);
+                this.setState({
+                    dialogText: 'Помилка при додаванні товару: ' + error,
+                    openDialogModal: true,
+                  });
             });
     }
 
+    handleCloseDialogModal = () => {
+        this.setState({ openDialogModal: false }); // Закриваємо діалогове вікно при натисканні кнопки "OK"
+      };
+
     render() {
-        const { error, isLoaded, items, isDialogOpen, selectedItemId, quantity, price } = this.state;
+        const { error, isLoaded, items, isDialogOpen, selectedItemId, quantity, price, sellers, sellerId, openDialogModal, dialogTextModal } = this.state;
 
         if (error) {
             throw new Error(error.message); // Генерувати виключення для зупинки виконання і відображення помилки
@@ -201,16 +276,6 @@ export default class AddGoodToShopComponent extends Component {
                 <div>
 
                     <Dialog open={isDialogOpen} onClose={this.closeDialog}>
-                        {/* <DialogTitle >
-                            <h1 style={{ marginBottom: '20px', textAlign: 'center' }}>Add Good</h1>
-                            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '10px' }}>
-                                <img
-                                    src={selectedItemId ? items.find(item => item.id === selectedItemId).photosGoodsDTOS[0].path : ''}
-                                    alt={`Image ${selectedItemId ? items.find(item => item.id === selectedItemId).photosGoodsDTOS[0].description : ''}`}
-                                    style={{ width: '20%' }}
-                                />
-                            </div>
-                        </DialogTitle> */}
 
                         <DialogTitle style={{ marginBottom: '20px', textAlign: 'left' }}>
                             Додати товар в магазин
@@ -235,28 +300,9 @@ export default class AddGoodToShopComponent extends Component {
                                 multiline
                                 InputProps={{
                                     readOnly: true,
-                                  }}
+                                }}
                                 sx={{ color: 'black', marginBottom: '16px', width: '100%' }}
                             />
-
-                            {/* <TextField
-                                label="Кількість товару"
-                                fullWidth
-                                type="number" // Встановлюємо тип на number
-                                value={quantity}
-                                onChange={e => this.setState({ quantity: e.target.value })}
-                                sx={{ marginBottom: '16px' }}
-                            />
-                            <TextField
-                                label="Ціна товару"
-                                fullWidth
-                                type="number" // Встановлюємо тип на number
-                                inputProps={{ step: '0.01' }} // Встановлюємо крок для дробового числа
-                                value={price}
-                                onChange={e => this.setState({ price: e.target.value })}
-                                sx={{ marginBottom: '16px' }}
-                            /> */}
-
 
                             <DialogContent sx={{ marginTop: '20px' }}>
                                 {/* Форма для введення даних */}
@@ -288,14 +334,35 @@ export default class AddGoodToShopComponent extends Component {
                         <DialogActions>
                             <Button variant="outlined" color="error" onClick={this.closeDialog}>
                                 Скасувати
-                            </Button>      
+                            </Button>
                             <Button variant="outlined" onClick={this.handleAddGoodClick}>
                                 Додати товар
                             </Button>
                         </DialogActions>
                     </Dialog>
+                    <div style={{ margin: 20 }}>
+                        <FormControl required sx={{ width: '40%', paddingBottom: '20px' }}>
+                            <InputLabel id="seller-label">Продавець</InputLabel>
+                            <Select
+                                label="Продавець"
+                                labelId="seller-label"
+                                id="seller-select"
+                                value={sellerId}
+                                onChange={this.handleSellerChange}
+                                sx={{ width: '100%' }}
+                            >
+                                {sellers.map((seller) => (
+                                    <MenuItem key={seller.id} value={seller.id}>
+                                        {seller.name}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                    </div>
 
                     <Grid container justifyContent="left">
+
+
                         <Grid item xs={12} sm={8}>
 
                             <TableContainer component={Paper}>
@@ -345,6 +412,8 @@ export default class AddGoodToShopComponent extends Component {
                             </TableContainer>
                         </Grid>
                     </Grid>
+                    <MessageEmptyFieldModal open={openDialogModal} onClose={this.handleCloseDialogModal} dialogText={dialogTextModal} />
+
                 </div>
             );
         }

@@ -41,7 +41,7 @@ const RoutesForAdmin = [
       {
         path: "/cart",
         element: <Comments/>,
-        name: "Кошик",
+        name: "Корзина",
         icon: <FaWpforms />,
         subputh: ""
       },

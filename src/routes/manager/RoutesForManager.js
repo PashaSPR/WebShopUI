@@ -14,7 +14,11 @@ const AddProperties = lazy(() => import("../../property/AddPropertiesComponent")
 const AddPropertiesByCategory = lazy(() => import("../../property/AddPropertiesByCategoryComponent"));
 const AddCategories = lazy(() => import("../../component/category/AddCategoriesComponent"));
 const AddSubcategories = lazy(() => import("../../component/subcategory/AddSubcategoriesComponent"));
-const AddGoodToShop = lazy(() => import("../../component/shop/AddGoodToShopComponent"));
+const AddGoodToShop = lazy(() => import("../../component/good/AddGoodToShopComponent"));
+const ViewGoodsOnCounter = lazy(()=> import("../../component/good/ViewGoodsOnCounter"));
+
+
+
 const Viewgoodsinshop = lazy(() => import("../../component/shop/ViewgoodsinshopComponent"));
 const Viewonegoodinshop = lazy(() => import("../../component/shop/ViewonegoodinshopComponent"));
 const AddCommentForm = lazy(() => import("../../component/comment/AddCommentForm"));
@@ -96,6 +100,13 @@ const RoutesForManager = [
         path: "/manager/add-good-to-shop",
         element: <AddGoodToShop/>,
         name: "Додати товар в магазин",
+        icon: <FaClipboardList />,
+        subputh: ""
+      },
+      {
+        path: "/manager/view-good-to-shop",
+        element: <ViewGoodsOnCounter/>,
+        name: "Перегляд товарів в магазині",
         icon: <FaClipboardList />,
         subputh: ""
       },
