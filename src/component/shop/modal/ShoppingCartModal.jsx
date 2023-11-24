@@ -13,7 +13,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-
+import axios from 'axios';
 const ShoppingCartModal = ({
   appointShoppingCartModalOpen, setAppointShoppingCartModalOpen,
   customerId,
@@ -34,6 +34,7 @@ const ShoppingCartModal = ({
 
   const [editedDeliveriesMethod, setEditedDeliveriesMethod] = useState('');
   const [editedPaymentsType, setEditedPaymentsType] = useState('');
+  const [customers, setCustomers] = useState([]);
 
   const loadCartData = async () => {
     try {
@@ -85,6 +86,28 @@ const ShoppingCartModal = ({
     }
   }, [appointShoppingCartModalOpen]);
 
+  useEffect(() => {
+    // Отримання переліку покупців з сервера
+    // (тимчасово, поки не буде працювати авторизація)
+    fetch(`http://localhost:8080/customers/getAll`)
+      .then((res) => {
+        if (res.status === 200) {
+          return res.json();
+        } else {
+          throw new Error('HTTP Error: ' + res.status);
+        }
+      })
+      .then((data) => {
+        // Перевірка, чи отримані дані не є null
+        if (data) {
+          setCustomers(data);
+          console.log(data);
+        } else {
+          console.error('Перелік покупців відсутній');
+        }
+      })
+      .catch((error) => console.error('Помилка отримання переліку покупців:', error));
+  }, []);
 
   useEffect(() => {
     const fetchPayments = async () => {
@@ -168,29 +191,57 @@ const ShoppingCartModal = ({
   };
 
   const handleMakeOrderButtonClick = () => {
-
+    // Отримуємо назву методу доставки за його id
+    const selectedDelivery = deliveries.find(delivery => delivery.id === editedDeliveriesMethod)?.method || '';
+    // Отримуємо назву типу оплати за його id
+    const selectedPayment = payments.find(payment => payment.id === editedPaymentsType)?.payment_type || '';
+    const selectedCustomers = customers.find(customer => customer.id === customerId) || '';
+  
     fetch('http://localhost:8080/orderLists/makeOrder', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-  
-          id: cartOfGoods[0].ordersListsId,
-          paymentsTypeId: editedPaymentsType,
-          deliveriesMethodId: editedDeliveriesMethod,
-          address_delivery: address_delivery,
-        // Передайте необхідні дані для оформлення замовлення
-        // Наприклад, ordersListToSaveDTO чи інші дані
+        id: cartOfGoods[0].ordersListsId,
+        paymentsTypeId: editedPaymentsType,
+        deliveriesMethodId: editedDeliveriesMethod,
+        address_delivery: address_delivery,
       }),
     })
       .then(response => response.text())
       .then(data => {
-        console.log('Замовлення товару успішно оброблено:', data);
+        console.log('Замовлення товару успішно оброблено:', data.toString());
         setAppointShoppingCartModalOpen(false);
       })
       .catch(error => console.error('Помилка оформлення замовлення:', error));
+  
+    const emailData = {
+      to: selectedCustomers.email,
+      subject: 'Замовлення товару',
+      text: `${selectedCustomers.name},Ваше замовлення прийнято!
+        \nДата замовлення: ${new Date()}
+        \nСума замовлення: ${totalAmount}
+        \nМетод оплати: ${selectedPayment}
+        \nСпосіб доставки: ${selectedDelivery}
+        \nАдреса доставки: ${address_delivery}
+        \nТовари у замовленні:\n${cartOfGoods.map(item => `${item.goodsGetAllDTO.name} - ${item.quantity} шт. - ${item.total} грн`).join('\n')}`
+    };
+    console.log(selectedCustomers);
+  console.log(emailData);
+    //HTTP-запит на сервер для відправлення листа на електронну пошту
+    axios.post('http://localhost:8080/email/send', emailData)
+      .then(response => {
+        console.log('Лист відправлено успішно', response.data);
+        // Додаткові дії після відправлення листа
+      })
+      .catch(error => {
+        console.error('Помилка відправлення листа', error);
+        // Обробка помилок
+      });
   };
+  
+  
 
   return (
     <Modal
